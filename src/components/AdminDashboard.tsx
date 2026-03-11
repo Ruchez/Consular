@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { db } from '../lib/db';
 import type { StudentRecord } from '../lib/db';
 import { Search, Users, LogOut, ShieldCheck, ChevronDown, FileSpreadsheet, FileText } from 'lucide-react';
@@ -11,10 +11,18 @@ const ACCENT_HOVER = '#A50D26';
 interface Props { onLogout: () => void; }
 
 export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
-  const [records] = useState<StudentRecord[]>(db.getRecords());
+  const [records, setRecords] = useState<StudentRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [exportOpen, setExportOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    db.getRecords().then(data => {
+      setRecords(data);
+      setLoading(false);
+    });
+  }, []);
 
   const filtered = records.filter(r =>
     r.fullName.toLowerCase().includes(search.toLowerCase()) ||
@@ -24,8 +32,8 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
 
   const handleExport = (type: 'excel' | 'pdf') => {
     setExportOpen(false);
-    if (type === 'excel') db.exportToExcel();
-    else db.exportToPDF();
+    if (type === 'excel') db.exportToExcel(records);
+    else db.exportToPDF(records);
   };
 
   return (
@@ -41,7 +49,7 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
           <div>
             <h2 className="text-xl font-bold text-[#111] leading-tight">Consular Dashboard</h2>
             <p className="text-[#8A8A8A] text-sm font-medium">
-              {records.length} student{records.length !== 1 ? 's' : ''} registered
+              {loading ? 'Loading records...' : `${records.length} student${records.length !== 1 ? 's' : ''} registered`}
             </p>
           </div>
         </div>
@@ -131,7 +139,14 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
                   </td>
                 </tr>
               ))}
-              {filtered.length === 0 && (
+              {loading && (
+                <tr>
+                  <td colSpan={7} className="py-20 text-center">
+                    <p className="text-[#8A8A8A] font-medium text-sm">Loading records securely from database...</p>
+                  </td>
+                </tr>
+              )}
+              {!loading && filtered.length === 0 && (
                 <tr>
                   <td colSpan={7} className="py-20 text-center">
                     <div className="flex flex-col items-center gap-3">

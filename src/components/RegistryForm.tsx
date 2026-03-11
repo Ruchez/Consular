@@ -12,15 +12,23 @@ const labelCls = "block text-[11px] font-bold uppercase tracking-widest text-[#8
 
 export const RegistryForm: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '', phoneNumber: '', passportNumber: '',
     school: '', nextOfKinName: '', nextOfKinPhone: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    db.saveRecord(formData);
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      await db.saveRecord(formData);
+      setSubmitted(true);
+    } catch (err) {
+      alert("Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const reset = () => setFormData({ fullName: '', phoneNumber: '', passportNumber: '', school: '', nextOfKinName: '', nextOfKinPhone: '' });
@@ -145,11 +153,12 @@ export const RegistryForm: React.FC = () => {
         {/* ── Submit ── */}
         <div className="px-8 pb-8">
           <button type="submit"
+            disabled={loading}
             onMouseEnter={e => (e.currentTarget.style.background = ACCENT_HOVER)}
             onMouseLeave={e => (e.currentTarget.style.background = ACCENT)}
-            className="w-full h-14 rounded-xl text-[16px] font-bold text-white tracking-wide transition-colors active:scale-[0.99]"
+            className="w-full h-14 rounded-xl text-[16px] font-bold text-white tracking-wide transition-colors active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ background: ACCENT }}>
-            Complete Registration →
+            {loading ? "Registering..." : "Complete Registration →"}
           </button>
           <p className="text-center text-[11px] text-[#BDBDBD] mt-4 uppercase tracking-widest font-semibold">
             Encrypted · Kenyan Consular Office

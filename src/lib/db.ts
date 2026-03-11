@@ -1,6 +1,12 @@
+import { createClient } from '@supabase/supabase-js';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+
+const SUPABASE_URL = 'https://gewoltwhitupkjbvosby.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdld29sdHdoaXR1cGtqYnZvc2J5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMzMyNjcsImV4cCI6MjA4ODgwOTI2N30.ytR-2IEP2kZ2PpLSJZThxyofBd6oJWp351_A_FuBGlw';
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export interface StudentRecord {
   id: string;
@@ -13,28 +19,50 @@ export interface StudentRecord {
   timestamp: string;
 }
 
-const STORAGE_KEY = 'kenyan_registry_data';
-
 export const db = {
-  saveRecord: (record: Omit<StudentRecord, 'id' | 'timestamp'>) => {
-    const records = db.getRecords();
-    const newRecord: StudentRecord = {
-      ...record,
-      id: Math.random().toString(36).substr(2, 9),
-      timestamp: new Date().toISOString(),
-    };
-    records.push(newRecord);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-    return newRecord;
+  saveRecord: async (record: Omit<StudentRecord, 'id' | 'timestamp'>) => {
+    const { data, error } = await supabase.from('students').insert([
+      {
+        full_name: record.fullName,
+        phone_number: record.phoneNumber,
+        passport_number: record.passportNumber,
+        school: record.school,
+        next_of_kin_name: record.nextOfKinName,
+        next_of_kin_phone: record.nextOfKinPhone,
+      }
+    ]).select().single();
+    
+    if (error) {
+      console.error('Error saving record:', error);
+      throw error;
+    }
+    return data;
   },
 
-  getRecords: (): StudentRecord[] => {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+  getRecords: async (): Promise<StudentRecord[]> => {
+    const { data, error } = await supabase
+      .from('students')
+      .select('*')
+      .order('created_at', { ascending: false });
+      
+    if (error) {
+      console.error('Error fetching records:', error);
+      return [];
+    }
+    
+    return data.map((r: any) => ({
+      id: r.id,
+      fullName: r.full_name,
+      phoneNumber: r.phone_number,
+      passportNumber: r.passport_number,
+      school: r.school,
+      nextOfKinName: r.next_of_kin_name,
+      nextOfKinPhone: r.next_of_kin_phone,
+      timestamp: r.created_at,
+    }));
   },
 
-  exportToExcel: () => {
-    const records = db.getRecords();
+  exportToExcel: (records: StudentRecord[]) => {
     if (records.length === 0) { alert('No records to export.'); return; }
 
     const rows = records.map(r => ({
@@ -48,7 +76,6 @@ export const db = {
     }));
 
     const ws = XLSX.utils.json_to_sheet(rows);
-    // Auto-width columns
     const colWidths = Object.keys(rows[0]).map(k => ({ wch: Math.max(k.length, 20) }));
     ws['!cols'] = colWidths;
 
@@ -57,13 +84,11 @@ export const db = {
     XLSX.writeFile(wb, `kenyan_students_${new Date().toISOString().split('T')[0]}.xlsx`);
   },
 
-  exportToPDF: () => {
-    const records = db.getRecords();
+  exportToPDF: (records: StudentRecord[]) => {
     if (records.length === 0) { alert('No records to export.'); return; }
 
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
-    // Header
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     doc.text('Kenyan Students Registry — TRNC', 14, 18);
