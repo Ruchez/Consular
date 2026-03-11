@@ -21,7 +21,7 @@ export interface StudentRecord {
 
 export const db = {
   saveRecord: async (record: Omit<StudentRecord, 'id' | 'timestamp'>) => {
-    const { data, error } = await supabase.from('students').insert([
+    const { error } = await supabase.from('students').insert([
       {
         full_name: record.fullName,
         phone_number: record.phoneNumber,
@@ -30,14 +30,13 @@ export const db = {
         next_of_kin_name: record.nextOfKinName,
         next_of_kin_phone: record.nextOfKinPhone,
       }
-    ]).select().single();
+    ]);
     
     if (error) {
       if (error.code === '23505') throw new Error('DUPLICATE_PASSPORT');
       console.error('Error saving record:', error);
       throw error;
     }
-    return data;
   },
 
   verifyAdminCode: async (code: string) => {
