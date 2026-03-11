@@ -1,0 +1,23 @@
+export const TRNC_UNIVERSITIES = [
+    "Ada Kent Üniversitesi (University of City Island)",
+    "Akdeniz Karpaz Üniversitesi (Mediterranean Karpaz University)",
+    "Arkin Yaratıcı Sanatlar ve Tasarım Üniversitesi (ARUCAD)",
+    "Atatürk Öğretmen Akademisi",
+    "Bahçeşehir Kıbrıs Üniversitesi",
+    "Doğu Akdeniz Üniversitesi (Eastern Mediterranean University)",
+    "Girne Amerikan Üniversitesi (Girne American University)",
+    "Girne Üniversitesi (University of Kyrenia)",
+    "Kıbrıs Amerikan Üniversitesi",
+    "Kıbrıs Aydın Üniversitesi",
+    "Kıbrıs Batı Üniversitesi (Cyprus West University)",
+    "Kıbrıs İlim Üniversitesi (Cyprus Science University)",
+    "Kıbrıs Sağlık ve Toplum Bilimleri Üniversitesi",
+    "Kıbrıs Sosyal Bilimler Üniversitesi",
+    "Lefke Avrupa Üniversitesi (European University of Lefke)",
+    "Orta Doğu Teknik Üniversitesi (METU NCC)",
+    "Onbeş Kasım Kıbrıs Üniversitesi",
+    "Rauf Denktaş Üniversitesi",
+    "Uluslararası Final Üniversitesi",
+    "Uluslararası Kıbrıs Üniversitesi (Cyprus International University)",
+    "Yakın Doğu Üniversitesi (Near East University)"
+].sort();
