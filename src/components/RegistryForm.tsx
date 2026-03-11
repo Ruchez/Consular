@@ -81,7 +81,7 @@ export const RegistryForm: React.FC = () => {
           >
 
         {/* ── Personal Info ── */}
-        <div className="p-8 pb-6">
+        <div className="p-6 md:p-8 pb-6">
           <div className="flex items-center gap-3 mb-7">
             <span className="w-[3px] h-5 rounded-full block" style={{ background: '#C8102E' }} />
             <span className="text-[13px] font-bold uppercase tracking-widest text-[#C8102E]">Personal Information</span>
@@ -137,10 +137,10 @@ export const RegistryForm: React.FC = () => {
         </div>
 
         {/* ── Divider ── */}
-        <div className="mx-8 border-t border-[#F0F0EE]" />
+        <div className="mx-6 md:mx-8 border-t border-[#F0F0EE]" />
 
         {/* ── Next of Kin ── */}
-        <div className="p-8 pt-6">
+        <div className="p-6 md:p-8 pt-6">
           <div className="flex items-center gap-3 mb-7">
             <span className="w-[3px] h-5 rounded-full block" style={{ background: '#006600' }} />
             <span className="text-[13px] font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: '#006600' }}>
@@ -165,7 +165,7 @@ export const RegistryForm: React.FC = () => {
         </div>
 
         {/* ── Submit ── */}
-        <div className="px-8 pb-8 mt-6">
+        <div className="px-6 md:px-8 pb-6 md:pb-8 mt-4 md:mt-6">
           <button type="submit"
             onMouseEnter={e => (e.currentTarget.style.background = ACCENT_HOVER)}
             onMouseLeave={e => (e.currentTarget.style.background = ACCENT)}
@@ -183,15 +183,15 @@ export const RegistryForm: React.FC = () => {
           key="confirm"
           initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
           transition={{ duration: 0.2 }}
-          className="p-8"
+          className="p-6 md:p-8"
         >
-          <div className="text-center mb-8">
+          <div className="text-center mb-6 md:mb-8">
             <h2 className="text-xl font-bold text-[#111]">Verify Your Details</h2>
             <p className="text-sm text-[#8A8A8A] mt-1">Please ensure all information is correct before submitting.</p>
           </div>
 
-          <div className="bg-[#F7F7F5] border border-[#E8E8E4] rounded-xl p-6 space-y-5 mb-8">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="bg-[#F7F7F5] border border-[#E8E8E4] rounded-xl p-5 md:p-6 space-y-5 mb-6 md:mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1">Full Name</p>
                 <p className="font-semibold text-[#111]">{formData.fullName}</p>
@@ -212,7 +212,7 @@ export const RegistryForm: React.FC = () => {
             
             <div className="border-t border-[#E8E8E4]" />
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1 flex items-center gap-1.5"><Heart size={10} style={{color: '#006600'}}/> Next of Kin Name</p>
                 <p className="font-semibold text-[#111]">{formData.nextOfKinName}</p>
@@ -224,7 +224,7 @@ export const RegistryForm: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col-reverse sm:flex-row gap-3">
             <button 
               onClick={() => setStep('form')}
               disabled={loading}

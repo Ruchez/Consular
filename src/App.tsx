@@ -69,7 +69,7 @@ function App() {
               <div className="w-1 h-14 rounded-full flex-shrink-0 mt-1"
                    style={{ background: ACCENT }} />
               <div>
-                <h1 className="text-3xl font-bold tracking-tight text-[#111] leading-tight">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#111] leading-tight">
                   Student Registration Portal
                 </h1>
                 <p className="mt-2 text-[#8A8A8A] text-[15px] font-medium max-w-xl">
