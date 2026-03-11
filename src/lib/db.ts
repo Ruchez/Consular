@@ -62,6 +62,18 @@ export const db = {
     }));
   },
 
+  deleteRecords: async (ids: string[]) => {
+    const { error } = await supabase
+      .from('students')
+      .delete()
+      .in('id', ids);
+      
+    if (error) {
+      console.error('Error deleting records:', error);
+      throw error;
+    }
+  },
+
   exportToExcel: (records: StudentRecord[]) => {
     if (records.length === 0) { alert('No records to export.'); return; }
 
