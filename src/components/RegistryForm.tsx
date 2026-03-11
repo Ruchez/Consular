@@ -28,8 +28,13 @@ export const RegistryForm: React.FC = () => {
     try {
       await db.saveRecord(formData);
       setStep('success');
-    } catch (err) {
-      alert("Registration failed. Please try again.");
+    } catch (err: any) {
+      if (err.message === 'DUPLICATE_PASSPORT') {
+        alert("This passport number is already registered. Please check your details.");
+        setStep('form');
+      } else {
+        alert("Registration failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

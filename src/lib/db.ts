@@ -3,8 +3,8 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const SUPABASE_URL = 'https://gewoltwhitupkjbvosby.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdld29sdHdoaXR1cGtqYnZvc2J5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMzMyNjcsImV4cCI6MjA4ODgwOTI2N30.ytR-2IEP2kZ2PpLSJZThxyofBd6oJWp351_A_FuBGlw';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -33,14 +33,28 @@ export const db = {
     ]).select().single();
     
     if (error) {
+      if (error.code === '23505') throw new Error('DUPLICATE_PASSPORT');
       console.error('Error saving record:', error);
       throw error;
     }
     return data;
   },
 
-  getRecords: async (): Promise<StudentRecord[]> => {
+  verifyAdminCode: async (code: string) => {
     const { data, error } = await supabase
+      .from('admin_access')
+      .select('id')
+      .eq('access_code', code)
+      .single();
+    if (error || !data) return false;
+    return true;
+  },
+
+  getRecords: async (adminCode: string): Promise<StudentRecord[]> => {
+    const adminClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { 'x-admin-code': adminCode } }
+    });
+    const { data, error } = await adminClient
       .from('students')
       .select('*')
       .order('created_at', { ascending: false });
@@ -62,8 +76,11 @@ export const db = {
     }));
   },
 
-  deleteRecords: async (ids: string[]) => {
-    const { error } = await supabase
+  deleteRecords: async (ids: string[], adminCode: string) => {
+    const adminClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { 'x-admin-code': adminCode } }
+    });
+    const { error } = await adminClient
       .from('students')
       .delete()
       .in('id', ids);

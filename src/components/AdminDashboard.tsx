@@ -8,9 +8,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 const ACCENT = '#C8102E';
 const ACCENT_HOVER = '#A50D26';
 
-interface Props { onLogout: () => void; }
+interface Props { onLogout: () => void; adminCode: string; }
 
-export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
+export const AdminDashboard: React.FC<Props> = ({ onLogout, adminCode }) => {
   const [records, setRecords] = useState<StudentRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -24,7 +24,7 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
 
   const fetchRecords = () => {
     setLoading(true);
-    db.getRecords().then(data => {
+    db.getRecords(adminCode).then(data => {
       setRecords(data);
       setLoading(false);
     });
@@ -63,7 +63,7 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (deleteCode !== '270603') {
+    if (deleteCode !== adminCode) {
       setDeleteError('Incorrect access code.');
       setDeleteCode('');
       return;
@@ -71,7 +71,7 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
     
     setIsDeleting(true);
     try {
-      await db.deleteRecords(Array.from(selectedIds));
+      await db.deleteRecords(Array.from(selectedIds), adminCode);
       setDeleteModalOpen(false);
       setDeleteCode('');
       setDeleteError('');

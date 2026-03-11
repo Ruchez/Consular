@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RegistryForm } from './components/RegistryForm';
 import { AdminDashboard } from './components/AdminDashboard';
+import { db } from './lib/db';
 import { ShieldCheck, UserPlus, LogIn, Lock, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -11,16 +12,23 @@ import './index.css';
 function App() {
   const [view, setView] = useState<'register' | 'admin_auth' | 'admin'>('register');
   const [password, setPassword] = useState('');
+  const [adminCode, setAdminCode] = useState('');
   const [error, setError] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  const handleAdminAuth = (e: React.FormEvent) => {
+  const handleAdminAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === '270603') {
+    setIsVerifying(true);
+    const isValid = await db.verifyAdminCode(password);
+    setIsVerifying(false);
+
+    if (isValid) {
+      setAdminCode(password);
       setView('admin');
       setError('');
       setPassword('');
     } else {
-      setError('Incorrect access code.');
+      setError('Incorrect access code. Unrecognized credentials.');
       setPassword('');
     }
   };
@@ -124,12 +132,12 @@ function App() {
                     <p className="text-center text-sm font-semibold" style={{ color: '#C8102E' }}>{error}</p>
                   )}
                   <button type="submit"
+                    disabled={isVerifying || password.length !== 6}
                     onMouseEnter={e => (e.currentTarget.style.background = ACCENT_HOVER)}
                     onMouseLeave={e => (e.currentTarget.style.background = ACCENT)}
-                    className="w-full h-12 rounded-xl font-bold text-[15px] text-white active:scale-[0.98] transition-colors"
+                    className="w-full h-12 rounded-xl font-bold text-[15px] text-white transition-colors disabled:opacity-50 active:scale-[0.98]"
                     style={{ background: ACCENT }}>
-                    <LogIn size={16} className="inline mr-2" />
-                    Authorize
+                    {isVerifying ? 'Verifying...' : <><LogIn size={16} className="inline mr-2" />Authorize</>}
                   </button>
                 </form>
               </div>
@@ -140,7 +148,7 @@ function App() {
             <motion.div key="admin"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2 }}>
-              <AdminDashboard onLogout={() => setView('register')} />
+              <AdminDashboard onLogout={() => { setView('register'); setAdminCode(''); }} adminCode={adminCode} />
             </motion.div>
           )}
 
