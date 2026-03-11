@@ -105,7 +105,11 @@ export const RegistryForm: React.FC = () => {
                 <Phone size={15} className="absolute left-3.5 top-3.5 text-[#BDBDBD]" />
                 <input required className={inputCls + " pl-9"} placeholder="+90 5XX … or +254 7XX …"
                   value={formData.phoneNumber}
-                  onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })} />
+                  onChange={e => {
+                    let val = e.target.value;
+                    if (val.length > 0 && !val.startsWith('+')) val = '+' + val;
+                    setFormData({ ...formData, phoneNumber: val });
+                  }} />
               </div>
             </div>
 
@@ -159,7 +163,11 @@ export const RegistryForm: React.FC = () => {
               <label className={labelCls}>Phone Number</label>
               <input required className={inputCls} placeholder="+254 7XX XXX XXX"
                 value={formData.nextOfKinPhone}
-                onChange={e => setFormData({ ...formData, nextOfKinPhone: e.target.value })} />
+                onChange={e => {
+                  let val = e.target.value;
+                  if (val.length > 0 && !val.startsWith('+')) val = '+' + val;
+                  setFormData({ ...formData, nextOfKinPhone: val });
+                }} />
             </div>
           </div>
         </div>
