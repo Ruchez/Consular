@@ -3,8 +3,8 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = 'https://gewoltwhitupkjbvosby.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdld29sdHdoaXR1cGtqYnZvc2J5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMzMyNjcsImV4cCI6MjA4ODgwOTI2N30.ytR-2IEP2kZ2PpLSJZThxyofBd6oJWp351_A_FuBGlw';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
