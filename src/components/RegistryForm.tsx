@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { db } from '../lib/db';
 import { TRNC_UNIVERSITIES } from '../lib/universities';
 import { User, Phone, FileText, School, Heart, CheckCircle2, ChevronDown } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ACCENT = '#C8102E';
 const ACCENT_HOVER = '#A50D26';
@@ -11,19 +11,23 @@ const inputCls = "w-full h-12 border border-[#E8E8E4] rounded-xl px-4 text-[15px
 const labelCls = "block text-[11px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-1.5";
 
 export const RegistryForm: React.FC = () => {
-  const [submitted, setSubmitted] = useState(false);
+  const [step, setStep] = useState<'form' | 'confirm' | 'success'>('form');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '', phoneNumber: '', passportNumber: '',
     school: '', nextOfKinName: '', nextOfKinPhone: '',
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleReview = (e: React.FormEvent) => {
     e.preventDefault();
+    setStep('confirm');
+  };
+
+  const handleFinalSubmit = async () => {
     setLoading(true);
     try {
       await db.saveRecord(formData);
-      setSubmitted(true);
+      setStep('success');
     } catch (err) {
       alert("Registration failed. Please try again.");
     } finally {
@@ -31,9 +35,12 @@ export const RegistryForm: React.FC = () => {
     }
   };
 
-  const reset = () => setFormData({ fullName: '', phoneNumber: '', passportNumber: '', school: '', nextOfKinName: '', nextOfKinPhone: '' });
+  const reset = () => {
+    setFormData({ fullName: '', phoneNumber: '', passportNumber: '', school: '', nextOfKinName: '', nextOfKinPhone: '' });
+    setStep('form');
+  };
 
-  if (submitted) {
+  if (step === 'success') {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }}
@@ -48,7 +55,7 @@ export const RegistryForm: React.FC = () => {
           Your details have been securely logged with the Kenyan Consular Office.
         </p>
         <button
-          onClick={() => { setSubmitted(false); reset(); }}
+          onClick={reset}
           onMouseEnter={e => (e.currentTarget.style.background = ACCENT_HOVER)}
           onMouseLeave={e => (e.currentTarget.style.background = ACCENT)}
           className="w-full h-12 rounded-xl text-[15px] font-bold text-white transition-colors"
@@ -64,7 +71,14 @@ export const RegistryForm: React.FC = () => {
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
       className="bg-white border border-[#E8E8E4] rounded-2xl shadow-sm overflow-hidden"
     >
-      <form onSubmit={handleSubmit}>
+      <AnimatePresence mode="wait">
+        {step === 'form' && (
+          <motion.form 
+            key="form"
+            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+            onSubmit={handleReview}
+          >
 
         {/* ── Personal Info ── */}
         <div className="p-8 pb-6">
@@ -151,21 +165,88 @@ export const RegistryForm: React.FC = () => {
         </div>
 
         {/* ── Submit ── */}
-        <div className="px-8 pb-8">
+        <div className="px-8 pb-8 mt-6">
           <button type="submit"
-            disabled={loading}
             onMouseEnter={e => (e.currentTarget.style.background = ACCENT_HOVER)}
             onMouseLeave={e => (e.currentTarget.style.background = ACCENT)}
-            className="w-full h-14 rounded-xl text-[16px] font-bold text-white tracking-wide transition-colors active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-14 rounded-xl text-[16px] font-bold text-white tracking-wide transition-colors active:scale-[0.99]"
             style={{ background: ACCENT }}>
-            {loading ? "Registering..." : "Complete Registration →"}
+            Review Details →
           </button>
-          <p className="text-center text-[11px] text-[#BDBDBD] mt-4 uppercase tracking-widest font-semibold">
-            Encrypted · Kenyan Consular Office
-          </p>
         </div>
 
-      </form>
+      </motion.form>
+      )}
+
+      {step === 'confirm' && (
+        <motion.div 
+          key="confirm"
+          initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
+          transition={{ duration: 0.2 }}
+          className="p-8"
+        >
+          <div className="text-center mb-8">
+            <h2 className="text-xl font-bold text-[#111]">Verify Your Details</h2>
+            <p className="text-sm text-[#8A8A8A] mt-1">Please ensure all information is correct before submitting.</p>
+          </div>
+
+          <div className="bg-[#F7F7F5] border border-[#E8E8E4] rounded-xl p-6 space-y-5 mb-8">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1">Full Name</p>
+                <p className="font-semibold text-[#111]">{formData.fullName}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1">Passport Number</p>
+                <p className="font-mono font-bold" style={{ color: ACCENT }}>{formData.passportNumber}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1">Phone Number</p>
+                <p className="font-semibold text-[#111]">{formData.phoneNumber}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1">University</p>
+                <p className="font-semibold text-[#111]">{formData.school}</p>
+              </div>
+            </div>
+            
+            <div className="border-t border-[#E8E8E4]" />
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1 flex items-center gap-1.5"><Heart size={10} style={{color: '#006600'}}/> Next of Kin Name</p>
+                <p className="font-semibold text-[#111]">{formData.nextOfKinName}</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1 flex items-center gap-1.5"><Heart size={10} style={{color: '#006600'}}/> Next of Kin Phone</p>
+                <p className="font-semibold text-[#111]">{formData.nextOfKinPhone}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setStep('form')}
+              disabled={loading}
+              className="flex-1 h-14 rounded-xl text-[15px] font-bold text-[#111] bg-[#E8E8E4] hover:bg-[#D4D4D4] transition-colors disabled:opacity-50">
+              Edit Details
+            </button>
+            <button 
+              onClick={handleFinalSubmit}
+              disabled={loading}
+              onMouseEnter={e => (!loading && (e.currentTarget.style.background = ACCENT_HOVER))}
+              onMouseLeave={e => (!loading && (e.currentTarget.style.background = ACCENT))}
+              className="flex-[2] h-14 rounded-xl text-[16px] font-bold text-white tracking-wide transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ background: ACCENT }}>
+              {loading ? "Registering securely..." : "Confirm & Submit"}
+            </button>
+          </div>
+          <p className="text-center text-[11px] text-[#BDBDBD] mt-6 uppercase tracking-widest font-semibold">
+            Encrypted · Kenyan Consular Office
+          </p>
+        </motion.div>
+      )}
+      </AnimatePresence>
     </motion.div>
   );
 };
