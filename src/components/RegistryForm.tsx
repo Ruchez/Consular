@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { db } from '../lib/db';
 import { TRNC_UNIVERSITIES } from '../lib/universities';
 import { User, Phone, FileText, School, Heart, CheckCircle2, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const ACCENT = '#C8102E';
-const ACCENT_HOVER = '#A50D26';
 
-const inputCls = "w-full h-12 border border-[#E8E8E4] rounded-xl px-4 text-[15px] font-medium text-[#111] bg-[#F7F7F5] outline-none transition-all placeholder:text-[#BDBDBD] focus:bg-white focus:border-[#111]";
-const labelCls = "block text-[11px] font-bold uppercase tracking-widest text-[#8A8A8A] mb-1.5";
+const inputCls = "w-full h-12 border border-[#D2D2D7] rounded-2xl px-4 text-[15px] font-medium text-[#1D1D1F] bg-[#F5F5F7] outline-none transition-colors placeholder:text-[#86868B] focus:bg-white focus:border-[#1D1D1F]";
+const labelCls = "block text-[12px] font-bold tracking-tight text-[#1D1D1F] mb-2";
 
 export const RegistryForm: React.FC = () => {
   const [step, setStep] = useState<'form' | 'confirm' | 'success'>('form');
@@ -47,43 +45,30 @@ export const RegistryForm: React.FC = () => {
 
   if (step === 'success') {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }}
-        className="max-w-md mx-auto bg-white border border-[#E8E8E4] rounded-2xl shadow-sm p-10 text-center"
-      >
-        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+      <div className="max-w-md mx-auto bg-white border border-[#D2D2D7]/30 rounded-[32px] shadow-[0_8px_40px_rgba(0,0,0,0.04)] p-12 text-center">
+        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
              style={{ background: '#F0FBF0' }}>
           <CheckCircle2 size={36} style={{ color: '#006600' }} />
         </div>
-        <h2 className="text-2xl font-bold text-[#111] mb-2">Registration Received</h2>
-        <p className="text-[#8A8A8A] text-[15px] mb-8 max-w-xs mx-auto">
-          Your details have been securely logged with the Kenyan Consular Office.
+        <h2 className="text-3xl font-bold text-[#1D1D1F] mb-3">All set.</h2>
+        <p className="text-[#86868B] text-[16px] mb-10 max-w-xs mx-auto font-medium leading-relaxed">
+          Your details have been securely logged with the Consular Office.
         </p>
         <button
           onClick={reset}
-          onMouseEnter={e => (e.currentTarget.style.background = ACCENT_HOVER)}
-          onMouseLeave={e => (e.currentTarget.style.background = ACCENT)}
-          className="w-full h-12 rounded-xl text-[15px] font-bold text-white transition-colors"
-          style={{ background: ACCENT }}>
-          Register Another Person
+          className="w-full h-14 rounded-2xl text-[16px] font-bold text-white transition-opacity hover:opacity-90"
+          style={{ background: '#1D1D1F' }}>
+          Register Another
         </button>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-      className="bg-white border border-[#E8E8E4] rounded-2xl shadow-sm overflow-hidden"
-    >
-      <AnimatePresence mode="wait">
+    <div className="bg-white border border-[#D2D2D7]/30 rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.02)] overflow-hidden">
+      <>
         {step === 'form' && (
-          <motion.form 
-            key="form"
-            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
-            onSubmit={handleReview}
-          >
+          <form onSubmit={handleReview}>
 
         {/* ── Personal Info ── */}
         <div className="p-6 md:p-8 pb-6">
@@ -144,7 +129,7 @@ export const RegistryForm: React.FC = () => {
         </div>
 
         {/* ── Divider ── */}
-        <div className="mx-6 md:mx-8 border-t border-[#F0F0EE]" />
+        <div className="mx-6 md:mx-10 border-t border-[#F5F5F7]" />
 
         {/* ── Next of Kin ── */}
         <div className="p-6 md:p-8 pt-6">
@@ -174,88 +159,76 @@ export const RegistryForm: React.FC = () => {
         </div>
 
         {/* ── Submit ── */}
-        <div className="px-6 md:px-8 pb-6 md:pb-8 mt-4 md:mt-6">
+        <div className="px-6 md:px-10 pb-10 mt-6">
           <button type="submit"
-            onMouseEnter={e => (e.currentTarget.style.background = ACCENT_HOVER)}
-            onMouseLeave={e => (e.currentTarget.style.background = ACCENT)}
-            className="w-full h-14 rounded-xl text-[16px] font-bold text-white tracking-wide transition-colors active:scale-[0.99]"
-            style={{ background: ACCENT }}>
-            Review Details →
+            className="w-full h-14 rounded-2xl text-[16px] font-bold text-white tracking-tight transition-opacity hover:opacity-90 active:scale-[0.99]"
+            style={{ background: '#1D1D1F' }}>
+            Continue →
           </button>
         </div>
 
-      </motion.form>
+      </form>
       )}
 
       {step === 'confirm' && (
-        <motion.div 
-          key="confirm"
-          initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
-          transition={{ duration: 0.2 }}
-          className="p-6 md:p-8"
-        >
-          <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-xl font-bold text-[#111]">Verify Your Details</h2>
-            <p className="text-sm text-[#8A8A8A] mt-1">Please ensure all information is correct before submitting.</p>
+        <div className="p-8 md:p-12">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl font-bold text-[#1D1D1F]">Review Details</h2>
+            <p className="text-[15px] text-[#86868B] mt-1.5 font-medium">Verify your information before submission.</p>
           </div>
 
-          <div className="bg-[#F7F7F5] border border-[#E8E8E4] rounded-xl p-5 md:p-6 space-y-5 mb-6 md:mb-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-[#F5F5F7] rounded-[24px] p-6 md:p-8 space-y-6 mb-10 border border-[#D2D2D7]/30">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
               <div>
-                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1">Full Name</p>
-                <p className="font-semibold text-[#111]">{formData.fullName}</p>
+                <p className="text-[12px] font-bold text-[#86868B] tracking-tight mb-1">Full Name</p>
+                <p className="text-[16px] font-semibold text-[#1D1D1F]">{formData.fullName}</p>
               </div>
               <div>
-                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1">Passport Number</p>
-                <p className="font-mono font-bold" style={{ color: ACCENT }}>{formData.passportNumber}</p>
+                <p className="text-[12px] font-bold text-[#86868B] tracking-tight mb-1">Passport Number</p>
+                <p className="text-[16px] font-mono font-bold" style={{ color: ACCENT }}>{formData.passportNumber}</p>
               </div>
               <div>
-                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1">Phone Number</p>
-                <p className="font-semibold text-[#111]">{formData.phoneNumber}</p>
+                <p className="text-[12px] font-bold text-[#86868B] tracking-tight mb-1">Phone Number</p>
+                <p className="text-[16px] font-semibold text-[#1D1D1F]">{formData.phoneNumber}</p>
               </div>
               <div>
-                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1">University</p>
-                <p className="font-semibold text-[#111]">{formData.school}</p>
+                <p className="text-[12px] font-bold text-[#86868B] tracking-tight mb-1">University</p>
+                <p className="text-[16px] font-semibold text-[#1D1D1F]">{formData.school}</p>
               </div>
             </div>
             
-            <div className="border-t border-[#E8E8E4]" />
+            <div className="border-t border-[#D2D2D7]/50" />
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
               <div>
-                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1 flex items-center gap-1.5"><Heart size={10} style={{color: '#006600'}}/> Next of Kin Name</p>
-                <p className="font-semibold text-[#111]">{formData.nextOfKinName}</p>
+                <p className="text-[12px] font-bold text-[#86868B] tracking-tight mb-1 flex items-center gap-1.5 uppercase">Next of Kin Name</p>
+                <p className="text-[16px] font-semibold text-[#1D1D1F]">{formData.nextOfKinName}</p>
               </div>
               <div>
-                <p className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1 flex items-center gap-1.5"><Heart size={10} style={{color: '#006600'}}/> Next of Kin Phone</p>
-                <p className="font-semibold text-[#111]">{formData.nextOfKinPhone}</p>
+                <p className="text-[12px] font-bold text-[#86868B] tracking-tight mb-1 flex items-center gap-1.5 uppercase">Next of Kin Phone</p>
+                <p className="text-[16px] font-semibold text-[#1D1D1F]">{formData.nextOfKinPhone}</p>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col-reverse sm:flex-row gap-3">
+          <div className="flex flex-col-reverse sm:flex-row gap-4">
             <button 
               onClick={() => setStep('form')}
               disabled={loading}
-              className="flex-1 h-14 rounded-xl text-[15px] font-bold text-[#111] bg-[#E8E8E4] hover:bg-[#D4D4D4] transition-colors disabled:opacity-50">
-              Edit Details
+              className="flex-1 h-14 rounded-2xl text-[16px] font-bold text-[#1D1D1F] bg-[#E5E5EA] hover:bg-[#D1D1D6] transition-colors disabled:opacity-50">
+              Edit
             </button>
             <button 
               onClick={handleFinalSubmit}
               disabled={loading}
-              onMouseEnter={e => (!loading && (e.currentTarget.style.background = ACCENT_HOVER))}
-              onMouseLeave={e => (!loading && (e.currentTarget.style.background = ACCENT))}
-              className="flex-[2] h-14 rounded-xl text-[16px] font-bold text-white tracking-wide transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ background: ACCENT }}>
-              {loading ? "Registering securely..." : "Confirm & Submit"}
+              className="flex-[2] h-14 rounded-2xl text-[16px] font-bold text-white tracking-tight transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+              style={{ background: '#1D1D1F' }}>
+              {loading ? "Registering..." : "Confirm & Submit"}
             </button>
           </div>
-          <p className="text-center text-[11px] text-[#BDBDBD] mt-6 uppercase tracking-widest font-semibold">
-            Encrypted · Kenyan Consular Office
-          </p>
-        </motion.div>
+        </div>
       )}
-      </AnimatePresence>
-    </motion.div>
+      </>
+    </div>
   );
 };

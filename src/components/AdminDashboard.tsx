@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { db } from '../lib/db';
 import type { StudentRecord } from '../lib/db';
-import { Search, Users, LogOut, ShieldCheck, ChevronDown, FileSpreadsheet, FileText, Trash2, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Search, LogOut, ShieldCheck, ChevronDown, FileSpreadsheet, FileText, Trash2, X } from 'lucide-react';
 
 // Single brand accent color — used for all primary actions
 const ACCENT = '#C8102E';
-const ACCENT_HOVER = '#A50D26';
 
 interface Props { onLogout: () => void; adminCode: string; }
 
@@ -85,7 +83,7 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout, adminCode }) => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-7">
+    <div className="space-y-8">
 
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5">
@@ -104,49 +102,39 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout, adminCode }) => {
 
         <div className="flex gap-2 items-center">
           {/* Delete Button (Conditional) */}
-          <AnimatePresence>
-            {selectedIds.size > 0 && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                onClick={() => setDeleteModalOpen(true)}
-                className="flex items-center gap-2 h-10 px-4 rounded-xl text-[13px] font-bold text-white transition-opacity hover:opacity-90"
-                style={{ background: ACCENT }}>
-                <Trash2 size={14} /> Delete ({selectedIds.size})
-              </motion.button>
-            )}
-          </AnimatePresence>
+          {selectedIds.size > 0 && (
+            <button
+              onClick={() => setDeleteModalOpen(true)}
+              className="flex items-center gap-2 h-10 px-4 rounded-full text-[13px] font-bold text-white transition-opacity hover:opacity-90"
+              style={{ background: ACCENT }}>
+              <Trash2 size={14} /> Delete ({selectedIds.size})
+            </button>
+          )}
 
           {/* Export dropdown */}
           <div className="relative" ref={exportRef}>
             <button
               onClick={() => setExportOpen(v => !v)}
-              onMouseEnter={e => (e.currentTarget.style.background = ACCENT_HOVER)}
-              onMouseLeave={e => (e.currentTarget.style.background = ACCENT)}
-              className="flex items-center gap-2 h-10 px-5 rounded-xl text-[13px] font-bold text-white transition-colors"
-              style={{ background: ACCENT }}>
+              className="flex items-center gap-2 h-10 px-5 rounded-full text-[13px] font-bold text-white transition-opacity hover:opacity-90"
+              style={{ background: '#1D1D1F' }}>
               Export <ChevronDown size={14} className={`transition-transform ${exportOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            <AnimatePresence>
-              {exportOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }}
-                  transition={{ duration: 0.12 }}
-                  className="absolute right-0 top-12 z-30 bg-white border border-[#E8E8E4] rounded-xl shadow-lg overflow-hidden w-44">
-                  <button
-                    onClick={() => handleExport('excel')}
-                    className="flex items-center gap-2.5 w-full px-4 py-3 text-[13px] font-semibold text-[#111] hover:bg-[#F7F7F5] transition-colors">
-                    <FileSpreadsheet size={15} style={{ color: '#006600' }} /> Export Excel
-                  </button>
-                  <div className="border-t border-[#F0F0EE]" />
-                  <button
-                    onClick={() => handleExport('pdf')}
-                    className="flex items-center gap-2.5 w-full px-4 py-3 text-[13px] font-semibold text-[#111] hover:bg-[#F7F7F5] transition-colors">
-                    <FileText size={15} style={{ color: ACCENT }} /> Export PDF
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {exportOpen && (
+              <div className="absolute right-0 top-12 z-30 bg-white border border-[#D2D2D7]/50 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] overflow-hidden w-48">
+                <button
+                  onClick={() => handleExport('excel')}
+                  className="flex items-center gap-3 w-full px-4 py-3.5 text-[13px] font-semibold text-[#1D1D1F] hover:bg-[#F5F5F7] transition-colors">
+                  <FileSpreadsheet size={16} style={{ color: '#006600' }} /> Export Excel
+                </button>
+                <div className="border-t border-[#F5F5F7]" />
+                <button
+                  onClick={() => handleExport('pdf')}
+                  className="flex items-center gap-3 w-full px-4 py-3.5 text-[13px] font-semibold text-[#1D1D1F] hover:bg-[#F5F5F7] transition-colors">
+                  <FileText size={16} style={{ color: ACCENT }} /> Export PDF
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Sign out */}
@@ -160,28 +148,28 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout, adminCode }) => {
 
       {/* ── Search ── */}
       <div className="relative">
-        <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#BDBDBD]" />
+        <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#86868B]" />
         <input
-          className="w-full h-12 border border-[#E8E8E4] rounded-xl pl-11 pr-4 text-[14px] font-medium text-[#111] bg-white outline-none transition-all placeholder:text-[#BDBDBD] focus:border-[#111]"
-          placeholder="Search by name, passport, or university…"
+          className="w-full h-12 border border-[#D2D2D7] rounded-2xl pl-11 pr-4 text-[14px] font-medium text-[#1D1D1F] bg-white outline-none transition-colors placeholder:text-[#86868B] focus:border-[#1D1D1F]"
+          placeholder="Search records…"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
       </div>
 
       {/* ── Table ── */}
-      <div className="bg-white border border-[#E8E8E4] rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-[#D2D2D7]/30 rounded-[28px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
         <div className="overflow-x-auto">
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="border-b border-[#F0F0EE] bg-[#FAFAF8]">
-                <th className="px-5 py-3.5 w-10">
+              <tr className="border-b border-[#F5F5F7] bg-[#FAFAF9]">
+                <th className="px-6 py-4 w-10">
                   <input 
                     type="checkbox"
                     checked={selectedIds.size === filtered.length && filtered.length > 0}
                     onChange={toggleSelectAll}
                     disabled={filtered.length === 0}
-                    className="w-4 h-4 rounded border-[#E8E8E4] text-[#C8102E] focus:ring-[#C8102E]"
+                    className="w-4 h-4 rounded-md border-[#D2D2D7] text-[#1D1D1F] focus:ring-[#1D1D1F]"
                   />
                 </th>
                 {[
@@ -189,49 +177,46 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout, adminCode }) => {
                   'Next of Kin', 'NK Phone', 'Date'
                 ].map((h, i) => (
                   <th key={h}
-                    className={`px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest text-[#8A8A8A] whitespace-nowrap ${i === 6 ? 'text-right' : 'text-left'}`}>
+                    className={`px-6 py-4 text-[11px] font-bold tracking-tight text-[#86868B] whitespace-nowrap ${i === 6 ? 'text-right' : 'text-left'}`}>
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F5F5F3]">
+            <tbody className="divide-y divide-[#F5F5F7]">
               {filtered.map(r => (
-                <tr key={r.id} className={`hover:bg-[#FAFAF8] transition-colors ${selectedIds.has(r.id) ? 'bg-red-50/50' : ''}`}>
-                  <td className="px-5 py-3.5">
+                <tr key={r.id} className={`hover:bg-[#F5F5F7]/50 transition-colors ${selectedIds.has(r.id) ? 'bg-red-50/30' : ''}`}>
+                  <td className="px-6 py-4">
                     <input 
                       type="checkbox"
                       checked={selectedIds.has(r.id)}
                       onChange={() => toggleSelect(r.id)}
-                      className="w-4 h-4 rounded border-[#E8E8E4] text-[#C8102E] focus:ring-[#C8102E]"
+                      className="w-4 h-4 rounded-md border-[#D2D2D7] text-[#1D1D1F] focus:ring-[#1D1D1F]"
                     />
                   </td>
-                  <td className="px-5 py-3.5 font-semibold text-[#111] whitespace-nowrap">{r.fullName}</td>
-                  <td className="px-5 py-3.5 text-[#555] whitespace-nowrap">{r.phoneNumber}</td>
-                  <td className="px-5 py-3.5 font-mono font-bold whitespace-nowrap" style={{ color: ACCENT }}>{r.passportNumber}</td>
-                  <td className="px-5 py-3.5 text-[#444] max-w-[160px] truncate">{r.school}</td>
-                  <td className="px-5 py-3.5 text-[#444] whitespace-nowrap">{r.nextOfKinName}</td>
-                  <td className="px-5 py-3.5 text-[#8A8A8A] whitespace-nowrap">{r.nextOfKinPhone}</td>
-                  <td className="px-5 py-3.5 text-[#ABABAB] text-right font-mono text-xs whitespace-nowrap">
+                  <td className="px-6 py-4 font-bold text-[#1D1D1F] whitespace-nowrap">{r.fullName}</td>
+                  <td className="px-6 py-4 text-[#424245] whitespace-nowrap">{r.phoneNumber}</td>
+                  <td className="px-6 py-4 font-mono font-bold whitespace-nowrap" style={{ color: ACCENT }}>{r.passportNumber}</td>
+                  <td className="px-6 py-4 text-[#424245] max-w-[180px] truncate">{r.school}</td>
+                  <td className="px-6 py-4 text-[#424245] whitespace-nowrap">{r.nextOfKinName}</td>
+                  <td className="px-6 py-4 text-[#86868B] whitespace-nowrap">{r.nextOfKinPhone}</td>
+                  <td className="px-6 py-4 text-[#86868B] text-right font-mono text-xs whitespace-nowrap">
                     {new Date(r.timestamp).toLocaleDateString()}
                   </td>
                 </tr>
               ))}
               {loading && (
                 <tr>
-                  <td colSpan={8} className="py-20 text-center">
-                    <p className="text-[#8A8A8A] font-medium text-sm">Loading records securely from database...</p>
+                  <td colSpan={8} className="py-24 text-center">
+                    <p className="text-[#86868B] font-medium text-sm">Loading database...</p>
                   </td>
                 </tr>
               )}
               {!loading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="py-20 text-center">
+                  <td colSpan={8} className="py-24 text-center">
                     <div className="flex flex-col items-center gap-3">
-                      <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: '#F5F5F3' }}>
-                        <Users size={22} style={{ color: '#BDBDBD' }} />
-                      </div>
-                      <p className="text-[#8A8A8A] font-medium text-sm">No records found</p>
+                      <p className="text-[#86868B] font-medium text-sm">No records found</p>
                     </div>
                   </td>
                 </tr>
@@ -242,61 +227,54 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout, adminCode }) => {
       </div>
 
       {/* ── Deletion Modal ── */}
-      <AnimatePresence>
-        {deleteModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-              onClick={() => !isDeleting && setDeleteModalOpen(false)}
-            />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl border border-[#E8E8E4] overflow-hidden"
-            >
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-5">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center bg-red-50">
-                    <Trash2 size={20} style={{ color: ACCENT }} />
-                  </div>
-                  <button onClick={() => !isDeleting && setDeleteModalOpen(false)} className="text-[#BDBDBD] hover:text-[#111]">
-                    <X size={20} />
-                  </button>
+      {deleteModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#1D1D1F]/40 backdrop-blur-sm"
+               onClick={() => !isDeleting && setDeleteModalOpen(false)} />
+          
+          <div className="relative w-full max-w-sm bg-white rounded-[32px] shadow-2xl border border-[#D2D2D7]/50 overflow-hidden">
+            <div className="p-8">
+              <div className="flex justify-between items-start mb-6">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-red-50">
+                  <Trash2 size={22} style={{ color: ACCENT }} />
                 </div>
-                
-                <h3 className="text-xl font-bold text-[#111] mb-2">Delete {selectedIds.size} Record{selectedIds.size !== 1 ? 's' : ''}?</h3>
-                <p className="text-sm text-[#8A8A8A] mb-6">
-                  This action is permanent and cannot be undone. Enter the Consular access code to confirm.
-                </p>
-
-                <form onSubmit={handleDelete} className="space-y-4">
-                  <input
-                    type="password"
-                    inputMode="numeric"
-                    maxLength={6}
-                    autoFocus
-                    placeholder="• • • • • •"
-                    value={deleteCode}
-                    onChange={e => setDeleteCode(e.target.value.replace(/\D/g, ''))}
-                    className="w-full h-12 border border-[#E8E8E4] rounded-xl px-4 text-center text-xl font-bold tracking-[0.4em] outline-none transition-all bg-[#F7F7F5] focus:bg-white focus:border-[#111]"
-                    style={{ fontFamily: 'monospace' }}
-                  />
-                  {deleteError && (
-                    <p className="text-center text-sm font-semibold" style={{ color: ACCENT }}>{deleteError}</p>
-                  )}
-                  <button type="submit"
-                    disabled={isDeleting || deleteCode.length !== 6}
-                    className="w-full h-12 rounded-xl font-bold text-[15px] text-white transition-opacity hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ background: ACCENT }}>
-                    {isDeleting ? 'Deleting...' : 'Confirm Deletion'}
-                  </button>
-                </form>
+                <button onClick={() => !isDeleting && setDeleteModalOpen(false)} className="text-[#86868B] hover:text-[#1D1D1F] transition-colors">
+                  <X size={22} />
+                </button>
               </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              
+              <h3 className="text-2xl font-bold text-[#1D1D1F] mb-2 leading-tight">Delete {selectedIds.size} Record{selectedIds.size !== 1 ? 's' : ''}?</h3>
+              <p className="text-[15px] text-[#86868B] mb-8 font-medium">
+                This action cannot be undone. Enter the access code to confirm.
+              </p>
 
-    </motion.div>
+              <form onSubmit={handleDelete} className="space-y-4">
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={6}
+                  autoFocus
+                  placeholder="••••••"
+                  value={deleteCode}
+                  onChange={e => setDeleteCode(e.target.value.replace(/\D/g, ''))}
+                  className="w-full h-14 border border-[#D2D2D7] rounded-2xl px-4 text-center text-2xl font-bold tracking-[0.4em] outline-none bg-[#F5F5F7] focus:bg-white focus:border-[#1D1D1F]"
+                  style={{ fontFamily: 'monospace' }}
+                />
+                {deleteError && (
+                  <p className="text-center text-[13px] font-bold" style={{ color: ACCENT }}>{deleteError}</p>
+                )}
+                <button type="submit"
+                  disabled={isDeleting || deleteCode.length !== 6}
+                  className="w-full h-14 rounded-2xl font-bold text-[16px] text-white transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{ background: '#1D1D1F' }}>
+                  {isDeleting ? 'Deleting...' : 'Confirm Deletion'}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
   );
 };
